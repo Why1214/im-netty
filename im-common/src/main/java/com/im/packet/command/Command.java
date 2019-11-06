@@ -1,0 +1,7 @@
+package com.im.packet.command;
+
+public interface Command {
+    Byte LOGIN_REQUEST = 1;
+
+    Byte LOGIN_RESPONSE = 2;
+}

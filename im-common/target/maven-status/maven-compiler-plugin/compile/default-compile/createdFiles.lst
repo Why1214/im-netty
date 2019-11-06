@@ -1,0 +1,9 @@
+com\im\packet\LoginResponsePacket.class
+com\im\serialize\impl\JSONSerializer.class
+com\im\serialize\SerializerAlgorithm.class
+com\im\packet\LoginRequestPacket.class
+com\im\util\PacketUtil.class
+com\im\packet\command\Command.class
+com\im\packet\Packet.class
+com\im\test\PacketUtilTest.class
+com\im\serialize\Serializer.class
