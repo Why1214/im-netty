@@ -1,6 +1,9 @@
 package com.im.util;
 
 import com.im.packet.LoginRequestPacket;
+import com.im.packet.LoginResponsePacket;
+import com.im.packet.MessageRequestPacket;
+import com.im.packet.MessageResponsePacket;
 import com.im.packet.Packet;
 import com.im.packet.command.Command;
 import com.im.serialize.Serializer;
@@ -26,6 +29,9 @@ public class PacketUtil {
 
     static {
         PACKET_MAP.put(Command.LOGIN_REQUEST, LoginRequestPacket.class);
+        PACKET_MAP.put(Command.LOGIN_RESPONSE, LoginResponsePacket.class);
+        PACKET_MAP.put(Command.MESSAGE_REQUEST, MessageRequestPacket.class);
+        PACKET_MAP.put(Command.MESSAGE_RESPONSE, MessageResponsePacket.class);
 
         SERIALIZER_MAP.put(SerializerAlgorithm.JSON, new JSONSerializer());
     }

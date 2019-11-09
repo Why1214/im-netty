@@ -1,7 +1,13 @@
 package com.im;
 
 import com.im.handler.ClientHandler;
+import com.im.packet.MessageRequestPacket;
+import com.im.util.LoginUtil;
+import com.im.util.PacketUtil;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -9,6 +15,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.Date;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class NettyClient {
@@ -39,7 +46,9 @@ public class NettyClient {
     private static void connect(Bootstrap bootstrap, String host, int port, int retry) {
         bootstrap.connect(host, port).addListener(future -> {
             if (future.isSuccess()) {
-                System.out.println(new Date() + ": 连接成功!");
+                System.out.println(new Date() + ": 连接成功，启动控制台线程……");
+                Channel channel = ((ChannelFuture) future).channel();
+                startConsoleThread(channel);
             } else if (retry == 0) {
                 System.err.println("重试次数已用完，放弃连接！");
             } else {
@@ -52,5 +61,26 @@ public class NettyClient {
                         .SECONDS);
             }
         });
+    }
+
+    private static void startConsoleThread(Channel channel) {
+        new Thread(() -> {
+            while (!Thread.interrupted()) {
+                if (LoginUtil.hasLogin(channel)) {
+                    // 登录成功
+                    System.out.println("输入消息发送至服务端: ");
+                    Scanner sc = new Scanner(System.in);
+                    String line = sc.nextLine();
+
+                    // 构建消息数据包
+                    MessageRequestPacket requestPacket = new MessageRequestPacket();
+                    requestPacket.setMessage(line);
+                    // 编码
+                    ByteBuf encode = PacketUtil.encode(channel.alloc(), requestPacket);
+                    // 发送
+                    channel.writeAndFlush(encode);
+                }
+            }
+        }).start();
     }
 }
